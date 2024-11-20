@@ -18,7 +18,9 @@ function InitMap()
     var map = L.map('map', {
       crs: L.CRS.Simple,
       zoomSnap: 0,
-      zoomDelta: 0.25
+      zoomDelta: 0.25,
+      zoomControl: false,
+      attributionControl: false,
     })
 
     // assign map and image dimensions
