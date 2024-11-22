@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Map from './components/Map';
+import Map from './sites/Map';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

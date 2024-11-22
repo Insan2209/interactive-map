@@ -26,9 +26,13 @@ module.exports = {
       },
       fontFamily:
       {
-        
+        lacquer: ['Lacquer', 'sans-serif'],
+        dancingscript: ['Dancing Script', 'sans-serif'],
+        bokor: ['Bokor', 'sans-serif'],
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
 }
