@@ -1,10 +1,10 @@
 import SidebarButton from "./SidebarButton";
 
-function SidebarButtonGroup(props) {
-
-    return (
-        props.text.map((text,index)=><SidebarButton img={props.img} text={text.name} color={text.color}/>)  
-    );  
+const SidebarButtonGroup = ({data}) =>
+{
+    return(
+        <SidebarButton img={data.type} text={data.name} color={data.color}/>
+    )
 }
 
 export default SidebarButtonGroup;
