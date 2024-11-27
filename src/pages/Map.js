@@ -28,29 +28,19 @@ function Map() {
         <ul className="py-2">
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
           <Collapsible trigger={<SidebarButton img="region" text="Regions" color="bg-palette2-e hover:bg-palette2-b"/>} transitionTime="500" easing="ease-in-out" open={expand===1} onOpening={() => isExpanded(1)}>
-            <div className="ml-6">
-              <DataFetch tableName="map_parts" columnName="type,name,color" type="region"/>
-            </div>
+            <DataFetch tableName="map_parts" columnName="id,type,name,color" type="region"/>
           </Collapsible>
           <Collapsible trigger={<SidebarButton img="island" text="Islands" color="bg-palette2-e hover:bg-palette2-b"/>} transitionTime="500" easing="ease-in-out" open={expand===2} onOpening={() => isExpanded(2)}>
-            <div className="ml-6">
-              <DataFetch tableName="map_parts" columnName="type,name,color,area" type="island"/>
-            </div>
+            <DataFetch tableName="map_parts" columnName="id,type,name,color" type="island"/>
           </Collapsible>
           <Collapsible trigger={<SidebarButton img="fort" text="Forts" color="bg-palette2-e hover:bg-palette2-b"/>} transitionTime="500" easing="ease-in-out" open={expand===3} onOpening={() => isExpanded(3)}>
-            <div className="ml-6">   
-              <DataFetch tableName="map_parts" columnName="type,name,color,area" type="fort"/>
-            </div>
+            <DataFetch tableName="map_parts" columnName="id,type,name,color" type="fort"/>
           </Collapsible>
           <Collapsible trigger={<SidebarButton img="outpost" text="Outposts" color="bg-palette2-e hover:bg-palette2-b"/>} transitionTime="500" easing="ease-in-out" open={expand===4} onOpening={() => isExpanded(4)}>
-            <div className="ml-6">
-              <DataFetch tableName="map_parts" columnName="type,name,color,area" type="outpost"/>
-            </div>
+            <DataFetch tableName="map_parts" columnName="id,type,name,color" type="outpost"/>
           </Collapsible>
           <Collapsible trigger={<SidebarButton img="seapost" text="Seaposts" color="bg-palette2-e hover:bg-palette2-b"/>} transitionTime="500" easing="ease-in-out" open={expand===5} onOpening={() => isExpanded(5)}>
-            <div className="ml-6">
-              <DataFetch tableName="map_parts" columnName="type,name,color,area" type="seapost"/>
-            </div>
+            <DataFetch tableName="map_parts" columnName="id,type,name,color" type="seapost"/>
           </Collapsible>
           <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Points of interest</p>

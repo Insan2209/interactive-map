@@ -1,11 +1,16 @@
-import supabaseClient from '../config/SupabaseConnection.js'
+//npm packages
 import { useEffect, useState } from 'react'
-import SidebarButtonGroup from '../components/SidebarButtonGroup.js'
+//config files
+import supabaseClient from '../config/SupabaseConnection.js'
+//components
+import SidebarButton from '../components/SidebarButton.js'
+
 
 function DataFetch(props) {
 
     const [fetchError, setFetchError] = useState(null)
     const [data, setData] = useState(null)
+    const [expand, isExpanded] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {  
@@ -24,25 +29,23 @@ function DataFetch(props) {
             {
                 setData(data)
                 setFetchError(null)
-                
             }
-
         }
         fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return(
-        <>
-        {fetchError && (<p>{fetchError}</p>)}
-        {data && (
-            <>
-            {data.map(data => (
-                <SidebarButtonGroup key={data.id} data={data}/>
-            ))}
-            </>
-        )}
-        </>
+            <div className="ml-6">
+            {fetchError && (<p>{fetchError}</p>)}
+            {data && (
+                <>
+                {data.map(data => (
+                    <SidebarButton key={data.id} img={data.type} text={data.name} color={data.color}/>
+                ))}
+                </>
+            )}
+            </div>
     );
 }
 
