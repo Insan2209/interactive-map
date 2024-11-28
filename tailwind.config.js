@@ -35,4 +35,8 @@ module.exports = {
   plugins: [
     require('tailwind-scrollbar'),
   ],
+  safelist: [
+    'bg-sky-800', 'bg-indigo-800', 'bg-green-800', 'bg-red-800', 'bg-gray-800',
+    'hover:bg-sky-600', 'hover:bg-indigo-600', 'hover:bg-green-600', 'hover:bg-red-600', 'hover:bg-gray-600'
+  ],
 }
