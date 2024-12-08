@@ -1,7 +1,7 @@
 function SidebarButton(props) {
   return (
     //returns li (parent is ul) with button in it, button contains img and text from props
-    <li className={"transition ease-in-out duration-500 mb-5 rounded-2xl "+props.color}>
+    <li className={"transition ease-in-out duration-500 mb-5 rounded-2xl list-none "+props.color}>
       <button className="flex flex-wrap group w-full">
         <div className="relative transition-all ease-in-out duration-500 group-hover:flex-grow flex-grow-0">
           <img src={"svg/"+props.img+".svg"} alt={props.img} className="h-14 w-14 p-2"></img>

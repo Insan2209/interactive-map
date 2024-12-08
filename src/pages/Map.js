@@ -72,7 +72,7 @@ function Map() {
           <SidebarButton img="valuecalculator" text="Value Calculator" color="bg-palette2-e hover:bg-palette2-b"/>
         </div>
       </div>
-      <div id="map" className="h-full bg-palette1-b grow"></div>  
+      <div id="map" className="h-full bg-palette1-b grow origin-bottom-left"></div>  
     </div>
   );
 }
