@@ -10,7 +10,7 @@ function CollapsibleSection({expand, setExpand, sectionId, text, type, buttonRef
   return (
     //Collapsible component from 'react-collapsible'
     <Collapsible 
-      trigger={<div ref={buttonRef} className={`${expand === sectionId ? "sticky -top-2 z-10 pb-px" : ""}`}><SidebarButton img={type} text={text} color="bg-palette2-e hover:bg-palette2-b" /></div>} //trigger is another react component, in this case SidebarButton surrounded with div that handles section button being sticky when open, ref={buttonRef} assigns reference to DOM element
+      trigger={<div ref={buttonRef} className={`${expand === sectionId ? "sticky -top-2 z-10 pb-px" : ""}`}><SidebarButton img={type} text={text} color="bg-palette2-e hover:bg-palette2-b" /></div>} //trigger points to another react component, in this case SidebarButton surrounded with div that handles section button being sticky when open, ref={buttonRef} assigns reference to DOM element
       transitionTime="500"
       easing="ease-in-out"
       open={expand === sectionId} //open if expand is equal to sectionId

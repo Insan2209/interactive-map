@@ -18,7 +18,8 @@ function DataFetch(props) {
             .from(props.tableName)
             .select(props.columnName)
             .eq('type', props.type)
-            //if error then send message to console, if put data into data variable
+            .order('id', {ascending: true})
+            //if error then send message to console, if not then put data into data variable
             if(error) {
                 setFetchError('Could not fetch the data')
                 setData(null)
