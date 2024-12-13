@@ -241,6 +241,8 @@ function InitMap()
 
   //making regionPolygons visibile by default
   map.addLayer(regionPolygons);
-}
+
+  return map;
+};
 
 export default InitMap

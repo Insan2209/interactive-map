@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 //config files
 import supabaseClient from '../config/SupabaseConnection.js'
 //components
-import SidebarButton from '../components/SidebarButton.js'
+import ClickableSidebarButton from '../components/ClickableSidebarButton.js'
 
 function DataFetch(props) {
 
@@ -41,7 +41,7 @@ function DataFetch(props) {
             {data && (
                 <>
                 {data.map(data => (
-                    <SidebarButton key={data.id} img={data.type} text={data.name} color={data.color}/>
+                    <ClickableSidebarButton key={data.id} img={data.type} text={data.name} color={data.color} x={data.x} y={data.y} zoom={data.zoom}/>
                 ))}
                 </>
             )}
