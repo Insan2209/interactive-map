@@ -2,7 +2,7 @@
 import React from "react";
 import Collapsible from "react-collapsible";
 //components
-import DataFetch from "../config/DataFetch";
+import DataFetch from "../utility/DataFetch";
 
 //function with all variables
 function CollapsibleSidebarButton({expand, setExpand, sectionId, text, type, buttonRef,handleScrollToButton,}) {
@@ -27,7 +27,7 @@ function CollapsibleSidebarButton({expand, setExpand, sectionId, text, type, but
       onOpening={() => setExpand(sectionId)} //while opening sets expand to sectionId of clicked element
       onClose={() => handleScrollToButton()} // after closing section it refocuses view to clicked button using handleScrollToButton function
     >
-      <DataFetch tableName="map_parts" columnName="id,type,name,color,x,y,zoom" type={type} /> {/*DataFetch component that pulls data from database*/}
+      <DataFetch tableName="map_parts" columnName="" type={type} /> {/*DataFetch component that pulls data from database*/}
     </Collapsible>
   );
 }

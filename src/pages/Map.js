@@ -1,10 +1,10 @@
 //npm packages
 import { useEffect, useState, useRef } from 'react';
-//config files
+//config
 import InitMap from '../config/InitMap';
 //components
 import CollapsibleSidebarButton from '../components/CollapsibleSidebarButton'
-//context
+//utility
 import { MapProvider } from '../utility/MapContext';
 
 //variable responsible for map initialization
@@ -12,7 +12,7 @@ let isMapInitialized = false;
 let mapInstance = null;
 
 function Map() {
-  //Map_parts Sections
+  //Map_parts sections
   const map_parts = [
     { sectionId: 1, text: "Regions", type: "region" },
     { sectionId: 2, text: "Islands", type: "island" },
@@ -75,7 +75,16 @@ function Map() {
           <CollapsibleSidebarButton img="valuecalculator" text="Value Calculator" color="bg-palette2-e hover:bg-palette2-b"/>
         </div>
       </div>
+      
       <div id="map" className="h-full bg-palette1-b grow origin-bottom-left"></div>
+      <div id="information_panel" className="w-[350px] h-full bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
+        <div className="text-2xl px-2 my-auto text-palette1-a font-bokor">
+          <img id="ip_img" alt="" src="" className="max-h-48 w-auto mx-auto my-2"/>
+          <p id="ip_name">Click any location to display informations about it</p>
+          <p id="ip_type"></p>
+          <p id="ip_area"></p>
+        </div>
+      </div>
     </div>
     </MapProvider>
   );

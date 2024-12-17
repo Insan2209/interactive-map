@@ -1,15 +1,22 @@
 //npm packages
 import { useEffect, useState } from 'react'
-//config files
+//config
 import supabaseClient from '../config/SupabaseConnection.js'
 //components
 import ClickableSidebarButton from '../components/ClickableSidebarButton.js'
+//hooks
+import useCameraMovement from '../hooks/useCameraMovement.js'
+import useInfoPanel from '../hooks/useInfoPanel.js'
 
 function DataFetch(props) {
 
     //useStates for handling error and data from database
     const [fetchError, setFetchError] = useState(null)
     const [data, setData] = useState(null)
+
+    //Using custom hooks for handling button click
+    const CameraMovement = useCameraMovement();
+    const InfoPanel = useInfoPanel();
 
     useEffect(() => {
         const fetchData = async () => {  
@@ -31,8 +38,12 @@ function DataFetch(props) {
             }
         }
         fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [props.tableName, props.columnName, props.type])
+
+    const handleClick = (x, y, zoom, text, type, area) => {
+        CameraMovement(x, y, zoom); // Camera Movement function call
+        InfoPanel(text, type, area); // Info Panel function call
+      };
 
     //data is being sent to SidebarButton components through mapping
     return(
@@ -41,7 +52,7 @@ function DataFetch(props) {
             {data && (
                 <>
                 {data.map(data => (
-                    <ClickableSidebarButton key={data.id} img={data.type} text={data.name} color={data.color} x={data.x} y={data.y} zoom={data.zoom}/>
+                    <ClickableSidebarButton key={data.id} img={data.type} text={data.name} color={data.color} onClick={() => handleClick(data.x, data.y, data.zoom, data.name, data.type, data.area)}/>
                 ))}
                 </>
             )}
