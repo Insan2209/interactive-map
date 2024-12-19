@@ -40,9 +40,9 @@ function DataFetch(props) {
         fetchData()
     }, [props.tableName, props.columnName, props.type])
 
-    const handleClick = (x, y, zoom, text, type, area) => {
+    const handleClick = (x, y, zoom, text, area, description, animals) => {
         CameraMovement(x, y, zoom); // Camera Movement function call
-        InfoPanel(text, type, area); // Info Panel function call
+        InfoPanel(text, area, description, animals); // Info Panel function call
       };
 
     //data is being sent to SidebarButton components through mapping
@@ -52,7 +52,7 @@ function DataFetch(props) {
             {data && (
                 <>
                 {data.map(data => (
-                    <ClickableSidebarButton key={data.id} img={data.type} text={data.name} color={data.color} onClick={() => handleClick(data.x, data.y, data.zoom, data.name, data.type, data.area)}/>
+                    <ClickableSidebarButton key={data.id} img={data.type} text={data.name} color={data.color} onClick={() => handleClick(data.x, data.y, data.zoom, data.name, data.area, data.description, [data.chickens, data.pigs, data.snakes])}/>
                 ))}
                 </>
             )}

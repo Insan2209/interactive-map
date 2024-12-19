@@ -47,7 +47,7 @@ function Map() {
   //return (HTML)
   return (
     <MapProvider mapInstance={mapInstance}>
-    <div className="flex flex-row h-max flex-1 relative overflow-y-hidden">
+    <div className="grid grid-cols-[350px_auto_350px] h-max flex-1 relative overflow-y-hidden">
       <div className="w-[350px] h-full overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
         <div className="py-2">
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
@@ -76,13 +76,23 @@ function Map() {
         </div>
       </div>
       
-      <div id="map" className="h-full bg-palette1-b grow origin-bottom-left"></div>
-      <div id="information_panel" className="w-[350px] h-full bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
-        <div className="text-2xl px-2 my-auto text-palette1-a font-bokor">
-          <img id="ip_img" alt="" src="" className="max-h-48 w-auto mx-auto my-2"/>
-          <p id="ip_name">Click any location to display informations about it</p>
-          <p id="ip_type"></p>
-          <p id="ip_area"></p>
+      <div id="map" className="h-full bg-palette1-b grow col-start-2 col-end-4 row-span-full"></div>
+      <div id="information_panel" className="w-[350px] h-full bg-transparent col-start-3 col-end-4 row-span-full z-[1000]">
+        <div className="text-2xl my-auto text-palette1-a font-bokor p-5 bg-cover" style={{backgroundImage: "url('/svg/bg1.svg')"}}>
+          <p id="ip_name" className="text-center text-3xl">Click any location to display informations about it</p>
+          <div className="my-2">
+            <img src="/svg/line2.svg" alt="" className="z-10 relative"/>
+            <img id="ip_img" alt="" src="" className="max-h-48 w-auto -my-1 z-0"/>
+            <img src="/svg/line2.svg" alt="" className="z-10 relative"/>
+          </div>
+          <p id="ip_description" className="my-4"></p>
+          <p id="ip_area" className="my-3"></p>
+          <p id="ip_animals" className="my-3"></p>
+          <div className="my-2 hidden" id="points_of_interest">
+            <img src="/svg/line2.svg" alt="" className="z-10 relative"/>
+            <p id="ip_poi" className="text-center text-3xl">Points of Interest</p>
+            <img src="/svg/line2.svg" alt="" className="z-10 relative"/>
+          </div>
         </div>
       </div>
     </div>

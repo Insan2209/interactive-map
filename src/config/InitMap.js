@@ -230,14 +230,14 @@ function InitMap()
 
   //creating two variables that contains all base layers and overlay layers
   const baseLayers = {
-    "Basemap": basemap,
+    '<span class="text-neutral-600 font-semibold pl-2">Basemap</span>': basemap,
   }
   const overlayLayers = {
-    "Regions": regionPolygons,
+    '<span class="text-sky-600 font-semibold pl-2">Regions</span>': regionPolygons,
   }
 
   //creation of layer control panel and adding base and overlay layers to it
-  const layerControl = L.control.layers(baseLayers,overlayLayers).addTo(map);
+  const layerControl = L.control.layers(baseLayers,overlayLayers, {position: 'topleft'}).addTo(map);
 
   //making regionPolygons visibile by default
   map.addLayer(regionPolygons);
