@@ -1,5 +1,5 @@
 //npm packages
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 //config
 import InitMap from '../config/InitMap';
 //components
@@ -11,8 +11,9 @@ import { MapProvider } from '../utility/MapContext';
 let isMapInitialized = false;
 let mapInstance = null;
 
+
 function Map() {
-  //Map_parts sections
+  //Map sections
   const map_parts = [
     { sectionId: 1, text: "Regions", type: "region" },
     { sectionId: 2, text: "Islands", type: "island" },
@@ -20,28 +21,38 @@ function Map() {
     { sectionId: 4, text: "Outposts", type: "outpost" },
     { sectionId: 5, text: "Seaposts", type: "seapost" },
   ];
+  const points_of_interest = [
+    { sectionId: 6, text: "Characters", type: "character" },
+    { sectionId: 7, text: "Beacons", type: "beacon" },
+    { sectionId: 8, text: "Thrones", type: "throne" },
+    { sectionId: 9, text: "Journals", type: "journal" },
+    { sectionId: 10, text: "Volcanos", type: "volcano" },
+    { sectionId: 11, text: "Barrels", type: "barrel" },
+    { sectionId: 12, text: "Riddle Locations", type: "riddlelocation" },
+  ];
+  const treasure_values = [
+    { sectionId: 13, text: "Gold Hoarders", type: "goldhoarders" },
+    { sectionId: 14, text: "Order of Souls", type: "orderofsouls" },
+    { sectionId: 15, text: "Merchant Alliance", type: "merchantalliance" },
+    { sectionId: 16, text: "Reaper's Bones", type: "reapersbones" },
+    { sectionId: 17, text: "Athena's Fortune", type: "athenasfortune" },
+    { sectionId: 18, text: "The Hunter's Call", type: "thehunterscall" },
+    { sectionId: 19, text: "Other Treasures", type: "othertreasures" },
+    { sectionId: 20, text: "Value Calculator", type: "valuecalculator" },
+  ];
 
   //useState used for expanding and collapsing sections (only one at time)
   const [expand, setExpand] = useState(0);
 
-  //code responsible for handling scrollintoView to clicked button/section
-  const buttonRefs = useRef([]);
-  const setButtonRef = (el, index) => {
-    buttonRefs.current[index] = el;
-  };  
-  const handleScrollToButton = (index) => {
-    const targetButton = buttonRefs.current[index];
-    if (targetButton) {
-      targetButton.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
-
   //checking if map is initialized, if not then initialize and set isMapInitialized to true
   useEffect(() => {
-    if (!isMapInitialized) {
-      mapInstance = InitMap();
-      isMapInitialized = true;
-    }
+    const initializeMap = async () => {
+      if (!isMapInitialized) {
+        mapInstance = await InitMap();
+        isMapInitialized = true;
+      }
+    };
+    initializeMap();
   }, []);
 
   //return (HTML)
@@ -52,32 +63,19 @@ function Map() {
         <div className="py-2">
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
           <ul>
-            {map_parts.map((section, index) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} img={section.type} text={section.text} type={section.type} buttonRef={(el) => setButtonRef(el, index)} handleScrollToButton={() => handleScrollToButton(index)}/>))}
+            {map_parts.map((section, index) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
           </ul>
           <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Points of interest</p>
-          <CollapsibleSidebarButton img="character" text="Characters" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="beacon" text="Beacons" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="throne" text="Thrones" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="journal" text="Journals" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="volcano" text="Volcanos" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="barrel" text="Barrels" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="riddlelocation" text="Riddle Locations" color="bg-palette2-e hover:bg-palette2-b"/>
+            {points_of_interest.map((section, index) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
           <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Treasure value</p>
-          <CollapsibleSidebarButton img="goldhoarders" text="Gold Hoarders" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="orderofsouls" text="Order of Souls" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="merchantalliance" text="Merchant Alliance" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="reapersbones" text="Reaper's Bones" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="athenasfortune" text="Athena's Fortune" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="thehunterscall" text="The Hunter's Call" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="othertreasures" text="Other Treasures" color="bg-palette2-e hover:bg-palette2-b"/>
-          <CollapsibleSidebarButton img="valuecalculator" text="Value Calculator" color="bg-palette2-e hover:bg-palette2-b"/>
+            {treasure_values.map((section, index) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
         </div>
       </div>
       
       <div id="map" className="h-full bg-palette1-b grow col-start-2 col-end-4 row-span-full"></div>
-      <div id="information_panel" className="w-[350px] h-full bg-transparent col-start-3 col-end-4 row-span-full z-[1000]">
+      <div id="information_panel" className="w-[350px] h-fit bg-transparent col-start-3 col-end-4 row-span-full z-[1000]">
         <div className="text-2xl my-auto text-palette1-a font-bokor p-5 bg-cover" style={{backgroundImage: "url('/svg/bg1.svg')"}}>
           <p id="ip_name" className="text-center text-3xl">Click any location to display informations about it</p>
           <div className="my-2">

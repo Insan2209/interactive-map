@@ -2,7 +2,6 @@ import { useMap } from "../utility/MapContext";
 
 const useCameraMovement = () => {
   const map = useMap();
-
   const moveCamera = (x, y, zoom) => {
     if (map) {
       map.flyTo([x, y], zoom);
