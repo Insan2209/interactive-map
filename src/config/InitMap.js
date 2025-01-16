@@ -9,7 +9,6 @@ async function InitMap(onIslandClick)
     mapInstance.remove();
     mapInstance = null;
   }
-
   // for use with browserify / webpack
   const L = require('leaflet')
   L.RasterCoords = require('leaflet-rastercoords')
@@ -278,6 +277,11 @@ async function InitMap(onIslandClick)
     };
   
     map.on('zoomend', updateTextVisibility);
+    map.on('overlayadd', function(e) {
+      if (e.layer === islandNames) {
+        updateTextVisibility();
+      }
+    });
   
     updateTextVisibility();
   } else {

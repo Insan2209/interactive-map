@@ -53,6 +53,10 @@ function Map() {
   //checking if map is initialized, if not then initialize and set isMapInitialized to true
   useEffect(() => {
     const initializeMap = async () => {
+      const mapEl = document.getElementById('map');
+      if (mapEl && mapEl._leaflet_id) {
+        return;
+      }
       if (!isMapInitialized) {
         mapInstance = await InitMap(handleIslandNameClick);
         isMapInitialized = true;
@@ -64,8 +68,8 @@ function Map() {
   //return (HTML)
   return (
     <MapProvider mapInstance={mapInstance}>
-    <div className="grid grid-cols-[350px_auto_350px] h-max flex-1 relative overflow-y-hidden">
-      <div className="w-[350px] h-full overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
+    <div className="grid xl:grid-cols-[370px_auto_400px] h-max flex-1 relative overflow-hidden max-w-screen">
+      <div id="sectionsSidebar" className="w-full h-full overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
         <div className="py-2">
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
           <ul>
@@ -79,7 +83,6 @@ function Map() {
             {treasure_values.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
         </div>
       </div>
-      
       <div id="map" className="h-full bg-palette1-b grow col-start-2 col-end-4 row-span-full"></div>
       <InfoPanel island={selectedIsland}/>
     </div>
