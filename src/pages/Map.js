@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import InitMap from '../config/InitMap';
 //components
 import CollapsibleSidebarButton from '../components/CollapsibleSidebarButton'
+import InfoPanel from '../components/InfoPanel';
 //utility
 import { MapProvider } from '../utility/MapContext';
 
@@ -43,12 +44,17 @@ function Map() {
 
   //useState used for expanding and collapsing sections (only one at time)
   const [expand, setExpand] = useState(0);
+  const [selectedIsland, setSelectedIsland] = useState(null);
+
+  const handleIslandNameClick = (islandData) => {
+    setSelectedIsland(islandData);
+  }
 
   //checking if map is initialized, if not then initialize and set isMapInitialized to true
   useEffect(() => {
     const initializeMap = async () => {
       if (!isMapInitialized) {
-        mapInstance = await InitMap();
+        mapInstance = await InitMap(handleIslandNameClick);
         isMapInitialized = true;
       }
     };
@@ -63,36 +69,19 @@ function Map() {
         <div className="py-2">
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
           <ul>
-            {map_parts.map((section, index) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
+            {map_parts.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type} onSelectIsland={(islandData) => setSelectedIsland(islandData)}/>))}
           </ul>
           <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Points of interest</p>
-            {points_of_interest.map((section, index) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
+            {points_of_interest.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
           <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
           <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Treasure value</p>
-            {treasure_values.map((section, index) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
+            {treasure_values.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
         </div>
       </div>
       
       <div id="map" className="h-full bg-palette1-b grow col-start-2 col-end-4 row-span-full"></div>
-      <div id="information_panel" className="w-[350px] h-fit bg-transparent col-start-3 col-end-4 row-span-full z-[1000]">
-        <div className="text-2xl my-auto text-palette1-a font-bokor p-5 bg-cover" style={{backgroundImage: "url('/svg/bg1.svg')"}}>
-          <p id="ip_name" className="text-center text-3xl">Click any location to display informations about it</p>
-          <div className="my-2">
-            <img src="/svg/line2.svg" alt="" className="z-10 relative"/>
-            <img id="ip_img" alt="" src="" className="max-h-48 w-auto -my-1 z-0"/>
-            <img src="/svg/line2.svg" alt="" className="z-10 relative"/>
-          </div>
-          <p id="ip_description" className="my-4"></p>
-          <p id="ip_area" className="my-3"></p>
-          <p id="ip_animals" className="my-3"></p>
-          <div className="my-2 hidden" id="points_of_interest">
-            <img src="/svg/line2.svg" alt="" className="z-10 relative"/>
-            <p id="ip_poi" className="text-center text-3xl">Points of Interest</p>
-            <img src="/svg/line2.svg" alt="" className="z-10 relative"/>
-          </div>
-        </div>
-      </div>
+      <InfoPanel island={selectedIsland}/>
     </div>
     </MapProvider>
   );

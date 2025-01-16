@@ -2,10 +2,10 @@
 import React from "react";
 import Collapsible from "react-collapsible";
 //components
-import SectionDataFetch from "../config/InitSections";
+import InitSections from "../config/InitSections";
 
 //function with all variables
-function CollapsibleSidebarButton({expand, setExpand, sectionId, tableName, text, type}) {
+function CollapsibleSidebarButton({expand, setExpand, sectionId, tableName, text, type, onSelectIsland}) {
   return (
     //Collapsible component from 'react-collapsible'
     <Collapsible 
@@ -26,7 +26,7 @@ function CollapsibleSidebarButton({expand, setExpand, sectionId, tableName, text
       open={expand === sectionId} //open if expand is equal to sectionId
       onOpening={() => setExpand(sectionId)} //while opening sets expand to sectionId of clicked element
     >
-      <SectionDataFetch tableName={tableName} columnName="" type={type} /> {/*DataFetch component that pulls data from database*/}
+      <InitSections tableName={tableName} columnName="" type={type} onSelectIsland={onSelectIsland}/> {/*DataFetch component that pulls data from database*/}
     </Collapsible>
   );
 }

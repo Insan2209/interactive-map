@@ -3,7 +3,7 @@ import { inTypeFetch } from '../utility/DataFetch';
 
 let mapInstance = null;
 
-async function InitMap()
+async function InitMap(onIslandClick)
 {
   if (mapInstance) {
     mapInstance.remove();
@@ -246,7 +246,7 @@ async function InitMap()
   map.addLayer(regionPolygons);
 
   // fetching islands data and adding it to another layer
-  const { data: islandData, error } = await inTypeFetch('map_parts', 'name, x, y', ['island', 'fort', 'outpost', 'seapost']);
+  const { data: islandData, error } = await inTypeFetch('map_parts', 'name, x, y, area, description, chickens, pigs, snakes', ['island', 'fort', 'outpost', 'seapost']);
   if (error) {
     console.error('Error fetching island data:', error);
     return;
@@ -257,7 +257,9 @@ async function InitMap()
     islandData.forEach(island => {
       const name = L.divIcon({iconSize: [200,30], html: island.name, className: "text-xl font-bokor text-center hover:text-2xl hover:text-shadow shadow-white text-nowrap"})
       const marker = L.marker([island.x-1, island.y], {icon: name});
-      marker.on(`click`, () => {})
+      marker.on(`click`, () => {
+        onIslandClick(island);
+      });
       islandNames.addLayer(marker);
     });
     map.addLayer(islandNames)
