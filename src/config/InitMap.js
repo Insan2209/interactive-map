@@ -240,6 +240,9 @@ async function InitMap(onIslandClick)
 
   // creation of layer control panel and adding base and overlay layers to it
   const layerControl = L.control.layers(baseLayers,overlayLayers, {position: 'topleft'}).addTo(map);
+  const layerControlContainer = layerControl.getContainer();
+  
+  layerControlContainer.classList.add("translate-x-[400px]",  "transition-transform", "duration-0")
 
   // making regionPolygons visibile by default
   map.addLayer(regionPolygons);
@@ -288,7 +291,7 @@ async function InitMap(onIslandClick)
     console.log("No island data found");
   }
   
-  return map;
+  return {map, layerControlContainer};
 };
 
 export default InitMap

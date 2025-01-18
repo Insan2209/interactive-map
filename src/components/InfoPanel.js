@@ -11,13 +11,13 @@ function InfoPanel({ island }) {
    
     if (!island) {
       return (
-        <div className={`relative flex w-full h-min overflow-y-auto col-start-3 col-end-4 row-span-full z-[1000] transition-transform duration-500 ${isOpen ? "translate-x-0" : "translate-x-[370px]"}`}>
-          <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-lg mt-2 -mr-2 h-16 w-10">
-            <img src="/svg/arrow.svg" alt="" className={`p-3  ${isOpen ? "-rotate-90" : "rotate-90"}`}/>
+        <div className={`relative flex w-full h-min max-w-[400px] overflow-y-auto col-start-3 col-end-4 row-span-full z-[1000] transition-transform duration-500 ${isOpen ? "translate-x-0" : "translate-x-[370px]"}`}>
+          <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-l-lg mt-2 -mr-2 h-16 w-10">
+            <img src="/svg/arrow.svg" alt="" className={`h-4 w-4 ml-2 my-auto  ${isOpen ? "-rotate-90" : "rotate-90"}`}/>
           </button>
           <div id="information_panel" className="w-full h-full bg-transparent col-start-3 col-end-4 row-span-full z-[1000] bg-cover" style={{ backgroundImage: "url('/svg/bg1.svg')" }}>
               <div className="text-2xl my-auto text-palette1-a font-bokor p-5">
-                  <p className="text-center text-3xl">Click any location to display information</p>
+                  <p className="text-center text-3xl">Click any location to display information about it</p>
               </div>         
           </div>
         </div>
@@ -30,9 +30,9 @@ function InfoPanel({ island }) {
     const formattedArea = area ? area.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : null;
   
     return (
-      <div className={`relative flex w-full h-full overflow-y-auto col-start-3 col-end-4 row-span-full z-[1000] transition-transform duration-500 ${isOpen ? "translate-x-0" : "translate-x-[370px]"}`}>
-        <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-lg mt-2 -mr-2 h-16 w-10">
-          <img src="/svg/arrow.svg" alt="" className={`p-3  ${isOpen ? "-rotate-90" : "rotate-90"}`}/>
+      <div className={`relative flex w-full h-full max-w-[400px] overflow-y-auto col-start-3 col-end-4 row-span-full z-[1000] transition-transform duration-500 ${isOpen ? "translate-x-0" : "translate-x-[370px]"}`}>
+        <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-lg mt-2 -mr-2 h-16 w-12">
+          <img src="/svg/arrow.svg" alt="" className={`h-4 w-4 m-auto  ${isOpen ? "-rotate-90" : "rotate-90"}`}/>
         </button>
         <div id="information_panel" className="flex items-center w-full h-full bg-transparent bg-cover" style={{ backgroundImage: "url('/svg/bg1.svg')" }}>
           <div className="text-2xl h-[96%] text-palette1-a font-bokor p-5 overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d">

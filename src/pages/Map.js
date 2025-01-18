@@ -12,7 +12,6 @@ import { MapProvider } from '../utility/MapContext';
 let isMapInitialized = false;
 let mapInstance = null;
 
-
 function Map() {
   //Map sections
   const map_parts = [
@@ -45,6 +44,13 @@ function Map() {
   //useState used for expanding and collapsing sections (only one at time)
   const [expand, setExpand] = useState(0);
   const [selectedIsland, setSelectedIsland] = useState(null);
+  const [isOpen, setIsOpen] = useState(true);
+  const [layerControlContainer, setLayerControlContainer] = useState(null);
+
+
+  const togglePanel = () => {
+    setIsOpen((prev) => !prev);
+  };
 
   const handleIslandNameClick = (islandData) => {
     setSelectedIsland(islandData);
@@ -58,34 +64,47 @@ function Map() {
         return;
       }
       if (!isMapInitialized) {
-        mapInstance = await InitMap(handleIslandNameClick);
+        const {map, layerControlContainer} = await InitMap(handleIslandNameClick);
+        mapInstance = map;
+        setLayerControlContainer(layerControlContainer);
         isMapInitialized = true;
       }
     };
     initializeMap();
-  }, []);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!layerControlContainer) return;
+    layerControlContainer.classList.remove("translate-x-[30px]", "translate-x-[400px]", "duration-0");
+    layerControlContainer.classList.add(isOpen ? "translate-x-[400px]" : "translate-x-[30px]", "bg-palette1-a", "transition-transform", "duration-500")
+
+  }, [isOpen, layerControlContainer]);
 
   //return (HTML)
   return (
     <MapProvider mapInstance={mapInstance}>
-    <div className="grid xl:grid-cols-[370px_auto_400px] h-max flex-1 relative overflow-hidden max-w-screen">
-      <div id="sectionsSidebar" className="w-full h-full overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
-        <div className="py-2">
-          <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
-          <ul>
-            {map_parts.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type} onSelectIsland={(islandData) => setSelectedIsland(islandData)}/>))}
-          </ul>
-          <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
-          <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Points of interest</p>
-            {points_of_interest.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
-          <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
-          <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Treasure value</p>
-            {treasure_values.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
+      <div className="grid xl:grid-cols-[400px_auto_400px] h-max flex-1 relative overflow-hidden max-w-screen">
+        <div id="sectionsSidebar" className={`flex w-full h-full max-w-[400px] overflow-y-auto col-start-1 col-end-2 row-span-full z-[1000] transition-transform duration-500 ${isOpen ? "translate-x-0" : "-translate-x-[370px]"}`}>
+          <div className="py-2 h-full w-full overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
+            <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
+            <ul>
+              {map_parts.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type} onSelectIsland={(islandData) => setSelectedIsland(islandData)}/>))}
+            </ul>
+            <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
+            <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Points of interest</p>
+              {points_of_interest.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
+            <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
+            <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Treasure value</p>
+              {treasure_values.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
+          </div>
+          <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-r-lg mt-2 h-16 w-8">
+            <img src="/svg/arrow.svg" alt="" className={`h-4 w-4 m-auto  ${isOpen ? "rotate-90" : "-rotate-90"}`}/>
+          </button>
         </div>
+        <div id="map" className="h-full bg-palette1-b grow col-start-1 col-end-4 row-span-full">
+        </div>
+        <InfoPanel island={selectedIsland}/>
       </div>
-      <div id="map" className="h-full bg-palette1-b grow col-start-2 col-end-4 row-span-full"></div>
-      <InfoPanel island={selectedIsland}/>
-    </div>
     </MapProvider>
   );
 }
