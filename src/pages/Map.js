@@ -44,9 +44,9 @@ function Map() {
   //useState used for expanding and collapsing sections (only one at time)
   const [expand, setExpand] = useState(0);
   const [selectedIsland, setSelectedIsland] = useState(null);
-  const [isOpen, setIsOpen] = useState(true);
+  //const [isMobile, setIsMobile] = useState(() => {return window.innerWidth < 1280;});
+  const [isOpen, setIsOpen] = useState(() => {return window.innerWidth >= 1280;});
   const [layerControlContainer, setLayerControlContainer] = useState(null);
-
 
   const togglePanel = () => {
     setIsOpen((prev) => !prev);
@@ -75,17 +75,17 @@ function Map() {
 
   useEffect(() => {
     if (!layerControlContainer) return;
-    layerControlContainer.classList.remove("translate-x-[30px]", "translate-x-[400px]", "duration-0");
-    layerControlContainer.classList.add(isOpen ? "translate-x-[400px]" : "translate-x-[30px]", "bg-palette1-a", "transition-transform", "duration-500")
+    layerControlContainer.classList.remove("xl:translate-x-[32px]", "xl:translate-x-[25vw]", "2xl:translate-x-[20vw]");
+    layerControlContainer.classList.add(...isOpen ? ["xl:translate-x-[25vw]", "2xl:translate-x-[20vw]"] : ["xl:translate-x-[32px]", "translate-x-[32px]"])
 
   }, [isOpen, layerControlContainer]);
 
   //return (HTML)
   return (
     <MapProvider mapInstance={mapInstance}>
-      <div className="grid xl:grid-cols-[400px_auto_400px] h-max flex-1 relative overflow-hidden max-w-screen">
-        <div id="sectionsSidebar" className={`flex w-full h-full max-w-[400px] overflow-y-auto col-start-1 col-end-2 row-span-full z-[1000] transition-transform duration-500 ${isOpen ? "translate-x-0" : "-translate-x-[370px]"}`}>
-          <div className="py-2 h-full w-full overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
+      <div className="grid grid-flow-col grid-cols-[50%_0%_50%] sm:grid-cols-[50%_0%_50%] xl:grid-cols-[25%_50%_25%] 2xl:grid-cols-[20%_60%_20%] h-screen flex-1 relative overflow-hidden max-w-screen">
+        <div id="sectionsSidebar" className={`relative flex w-full h-full overflow-y-auto z-[2000] transition-transform duration-500 col-start-1 col-end-2 row-span-full ${isOpen ? "translate-x-0" : "-translate-x-[calc(100%-28px)]"}`}>
+          <div className="h-full w-full overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
             <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
             <ul>
               {map_parts.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type} onSelectIsland={(islandData) => setSelectedIsland(islandData)}/>))}
@@ -97,11 +97,11 @@ function Map() {
             <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Treasure value</p>
               {treasure_values.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
           </div>
-          <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-r-lg mt-2 h-16 w-8">
-            <img src="/svg/arrow.svg" alt="" className={`h-4 w-4 m-auto  ${isOpen ? "rotate-90" : "-rotate-90"}`}/>
+          <button onClick={togglePanel} className={`bg-palette1-d text-white font-bold text-3xl rounded-r-lg mt-2 h-16 w-8`}>
+            <img src="/svg/arrow.svg" alt="" className={` h-4 w-4 m-auto ${isOpen ? "rotate-90" : "-rotate-90"}`}/>
           </button>
         </div>
-        <div id="map" className="h-full bg-palette1-b grow col-start-1 col-end-4 row-span-full">
+        <div id="map" className="h-full w-full bg-palette1-b col-start-1 col-end-4 row-span-full">
         </div>
         <InfoPanel island={selectedIsland}/>
       </div>

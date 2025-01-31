@@ -15,3 +15,34 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.leaflet-popup-content-wrapper {
+  background-color: #0C1821;
+  border: 1px white solid;
+  color: #CCC9DC;
+}
+
+.leaflet-popup-content > ul > li {
+  width: fit-content;
+  padding: 5px;
+  margin: 3px auto 3px auto;
+  text-align: center;
+  font-size: 16px;
+  text-wrap: nowrap;
+  font-family: "Lacquer";
+}
+
+.leaflet-popup-content > ul > li:hover {
+  text-shadow: 0 1px 1px white;
+  cursor: pointer;
+}
+
+.leaflet-popup-tip {
+  background-color: #0C1821;
+  border: 1px white solid;
+}
+
+.leaflet-popup-close-button > span {
+  color: #CCC9DC;
+  font-size: 1.5rem;
+}

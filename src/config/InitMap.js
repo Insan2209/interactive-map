@@ -5,10 +5,16 @@ let mapInstance = null;
 
 async function InitMap(onIslandClick)
 {
+
+  /////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////// <-- map configuration --> ///////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////
+
   if (mapInstance) {
     mapInstance.remove();
     mapInstance = null;
   }
+
   // for use with browserify / webpack
   const L = require('leaflet')
   L.RasterCoords = require('leaflet-rastercoords')
@@ -18,13 +24,14 @@ async function InitMap(onIslandClick)
     25522   // original height of image
   ]
 
-  // custom CRS with origin point (0,0) is bottom left and not top left corner
-  const BottomLeftOriginCRS = L.extend({}, L.CRS.Simple, {
+  // custom CRS with origin point (0,0) is top left and not bottom left
+  const TopLeftOriginCRS = L.extend({}, L.CRS.Simple, {
     transformation: new L.Transformation(1, 0, 1, 0)
   });
+
   // create the map
   const map = L.map('map', {
-    crs: BottomLeftOriginCRS,
+    crs: TopLeftOriginCRS,
     zoomSnap: 0,
     zoomDelta: 0.25,
     zoomControl: false,
@@ -33,9 +40,9 @@ async function InitMap(onIslandClick)
 
   // assign map and image dimensions
   const rc = new L.RasterCoords(map, img)
-  // set the view in the middle of the image, initial zoom to 2 and max bounds 25 units outside of map
+  // set the view in the middle of the image, initial zoom to 2 and custom max bounds
   map.setView(rc.unproject([img[0]/2, img[1]/2]), 2)
-  map.setMaxBounds([[-75,290],[275,-75]])
+  map.setMaxBounds([[-200,400],[400,-200]])
 
   // the tile layer containing the image generated with `gdal2tiles --leaflet -p raster -w none <img> tiles`
   const basemap = L.tileLayer('./tiles/{z}/{x}/{y}.png', {
@@ -45,15 +52,103 @@ async function InitMap(onIslandClick)
     minZoom: 2,
   }).addTo(map)
 
+  // fetching islands data
+  const { data: islandData, error } = await inTypeFetch('map_parts', 'name, type, x, y, area, description, chickens, pigs, snakes', ['island', 'fort', 'outpost', 'seapost']);
+  if (error) {
+    console.error('Error fetching island data:', error);
+    return;
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////// <-- popups and popFunctions --> ///////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+
   // popup with coordinates, purely for checking x and y for map stuff - will be commented out later
-  const popup = L.popup();
+  /*const popup2 = L.popup();
   function onMapClick(e) {
-    popup
+    popup2
       .setLatLng(e.latlng)
       .setContent("You clicked the map at " + e.latlng.toString())
       .openOn(map);
   }
-  map.on('click', onMapClick);
+  map.on('click', onMapClick);*/
+
+  //creation of custom marker layer
+  const customMarkers = L.layerGroup();
+
+  //function for adding custom markers by users
+  function addMarker(lat, lng)
+  {
+    const marker = L.marker([lat, lng], {
+      draggable: true,
+      icon: L.icon({iconUrl: 'svg/customMarker.svg', shadowUrl: 'svg/customMarker.svg', iconSize: [40, 52], shadowSize: [0, 0], iconAnchor: [40, 52], shadowAnchor: [0, 0], popupAnchor: [0, 0]})
+    })
+    customMarkers.addLayer(marker);
+    map.closePopup();
+  }
+
+  //function for removing custom markers
+  function removeMarkers()
+  {
+    customMarkers.clearLayers();
+    map.closePopup();
+  }
+
+  //function for calculating distance
+  function getDistance(lat1, lng1, lat2, lng2)
+  {
+    return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lng2 - lng1, 2));
+  }
+
+  //function for finding closest X type location
+  function findClosest(lat, lng, column, value)
+  {
+    if (islandData && islandData.length > 0) 
+    {
+      let closestLocation = null;
+      let minDistance = Infinity;
+      islandData.forEach(island => {
+        if(island[column] === value)
+        {
+          const distance = getDistance(lat, lng, island.x, island.y)
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestLocation = island;
+          }
+        }
+      })
+      onIslandClick(closestLocation)
+      map.flyTo([closestLocation.x, closestLocation.y], 6);
+      map.closePopup();
+    } 
+    else 
+    {
+      console.log("No island data found");
+    }
+  }
+
+  //popup with menu on rightclick
+  const popup = L.popup({maxWidth: 500, minWidth: 160})
+  function onRightClick(e) 
+  {
+    const location = e.latlng
+    popup
+      .setLatLng(location)
+      .setContent(`
+        <ul>
+          <li onclick="addMarker(${location.lat}, ${location.lng})">Add Marker</li>
+          <li onclick="removeMarkers()">Clear Markers</li>
+          <li onclick="findClosest(${location.lat}, ${location.lng}, 'chickens', true)">Closest Chickens</li>
+          <li onclick="findClosest(${location.lat}, ${location.lng}, 'pigs', true)">Closest Pigs</li>
+          <li onclick="findClosest(${location.lat}, ${location.lng}, 'snakes', true)">Closest Snakes</li>
+          <li onclick="findClosest(${location.lat}, ${location.lng}, 'type', 'outpost')">Closest Outpost</li>
+        </ul>`)
+      .openOn(map)
+      window.addMarker = addMarker;
+      window.removeMarkers = removeMarkers;
+      window.findClosest = findClosest;
+  }
+  map.on('contextmenu', onRightClick)
 
   ///////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////// <-- region polygons --> ///////////////////////////////
@@ -229,32 +324,102 @@ async function InitMap(onIslandClick)
 
   // adding all region polygons into one layer
   const regionPolygons = L.layerGroup([TSOP_polygon, TW_polygon, TAI_polygon, TDR_polygon, NMS_polygon]);
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////// <-- tile names layer --> ///////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  const rows = 26;
+  const cols = 26;
+  const tileWidth = img[0] / rows;
+  const tileHeight = img[1] / cols;
+
+  const insideTileNames = L.layerGroup();
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      
+      const x1 = c * tileWidth;
+      const y1 = r * tileHeight;
   
-  // creating two variables that contains all base layers and overlay layers
-  const baseLayers = {
-    '<span class="text-neutral-600 font-semibold pl-2">Basemap</span>': basemap,
-  }
-  const overlayLayers = {
-    '<span class="text-sky-600 font-semibold pl-2">Regions</span>': regionPolygons,
-  }
-
-  // creation of layer control panel and adding base and overlay layers to it
-  const layerControl = L.control.layers(baseLayers,overlayLayers, {position: 'topleft'}).addTo(map);
-  const layerControlContainer = layerControl.getContainer();
+      const centerX = x1 + tileWidth / 2;
+      const centerY = y1 + tileWidth / 2;
   
-  layerControlContainer.classList.add("translate-x-[400px]",  "transition-transform", "duration-0")
-
-  // making regionPolygons visibile by default
-  map.addLayer(regionPolygons);
-
-  // fetching islands data and adding it to another layer
-  const { data: islandData, error } = await inTypeFetch('map_parts', 'name, x, y, area, description, chickens, pigs, snakes', ['island', 'fort', 'outpost', 'seapost']);
-  if (error) {
-    console.error('Error fetching island data:', error);
-    return;
+      const centerLatLng = rc.unproject([centerX, centerY]);
+  
+      const rowNumber = r + 1;
+      const colLetter = String.fromCharCode(65 + c);
+  
+      const labelText = `${colLetter}${rowNumber}`;
+  
+      const marker = L.marker(centerLatLng, {
+        interactive: false,
+        icon: L.divIcon({
+          className: 'grid-label',
+          html: `<span class="text-base font-bokor text-center text-shadow">${labelText}</span>`
+        })
+      })
+      insideTileNames.addLayer(marker);
+    }
   }
+
+  //////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////// <-- tile names layer 2 --> ///////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+
+  const outsideTileNames = L.layerGroup();
+
+  for (let r = 0; r < rows; r++) {
+      
+      const y1 = r * tileHeight;
+  
+      const centerY = y1 + tileHeight / 2;
+  
+      const centerLatLng = rc.unproject([-500, centerY]);
+  
+      const rowNumber = r + 1;
+  
+      const labelText = `${rowNumber}`;
+  
+      const marker = L.marker(centerLatLng, {
+        interactive: false,
+        icon: L.divIcon({
+          className: 'grid-label',
+          html: `<span class="text-lg font-bokor text-center text-shadow text-[#CCC9DC]">${labelText}</span>`
+        })
+      })
+      outsideTileNames.addLayer(marker);
+    }
+
+  for (let c = 0; c < cols; c++) {
+    
+    const x1 = c * tileWidth;
+
+    const centerX = x1 + tileWidth / 2;
+
+    const centerLatLng = rc.unproject([centerX, -500]);
+
+    const colLetter = String.fromCharCode(65 + c);
+
+    const labelText = `${colLetter}`;
+
+    const marker = L.marker(centerLatLng, {
+      interactive: false,
+      icon: L.divIcon({
+        className: 'grid-label',
+        html: `<span class="text-lg font-bokor text-center text-shadow text-[#CCC9DC]">${labelText}</span>`
+      })
+    })
+    outsideTileNames.addLayer(marker);
+  }
+  
+  //////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////// <-- island names layer --> ///////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+
+  const islandNames = L.layerGroup();
+
   if (islandData && islandData.length > 0) {
-    const islandNames = L.layerGroup();
     
     islandData.forEach(island => {
       const name = L.divIcon({iconSize: [200,30], html: island.name, className: "text-xl font-bokor text-center hover:text-2xl hover:text-shadow shadow-white text-nowrap"})
@@ -263,10 +428,10 @@ async function InitMap(onIslandClick)
         onIslandClick(island);
       });
       islandNames.addLayer(marker);
+
+      //making island names layer visible by default
+      map.addLayer(islandNames)
     });
-    map.addLayer(islandNames)
-    layerControl.addOverlay(islandNames,
-      '<span class="text-green-600 font-semibold pl-2">Island Names</span>');
     
     // updating visibility based on zoom
     const updateTextVisibility = () => {
@@ -277,11 +442,17 @@ async function InitMap(onIslandClick)
           icon.style.display = currentZoom >= 3.5 ? 'block' : 'none';
         }
       });
+      insideTileNames.eachLayer(layer => {
+        const icon = layer.getElement();
+        if (icon) {
+          icon.style.display = currentZoom >= 3.5 ? 'block' : 'none';
+        }
+      });
     };
   
     map.on('zoomend', updateTextVisibility);
     map.on('overlayadd', function(e) {
-      if (e.layer === islandNames) {
+      if (e.layer === islandNames || e.layer === insideTileNames) {
         updateTextVisibility();
       }
     });
@@ -290,7 +461,34 @@ async function InitMap(onIslandClick)
   } else {
     console.log("No island data found");
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////// <-- creating layer menu --> ///////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////
+
+  // making some layers visible by default
+  map.addLayer(regionPolygons);
+  map.addLayer(customMarkers);
+  map.addLayer(outsideTileNames);
   
+  // creating two variables that contains all base layers and overlay layers
+  const baseLayers = {
+    '<span class="text-neutral-600 font-semibold pl-2">Basemap</span>': basemap,
+  }
+  const overlayLayers = {
+    '<span class="text-purple-600 font-semibold pl-2">Custom Markers</span>': customMarkers,
+    '<span class="text-sky-600 font-semibold pl-2">Regions</span>': regionPolygons,
+    '<span class="text-green-600 font-semibold pl-2">Island Names</span>': islandNames,
+    '<span class="text-red-600 font-semibold pl-2">Outside Tile Names</span>': outsideTileNames,
+    '<span class="text-yellow-600 font-semibold pl-2">Inside Tile Names</span>': insideTileNames,
+  }
+
+  // creation of layer control panel and adding base and overlay layers to it
+  const layerControl = L.control.layers(baseLayers,overlayLayers, {position: 'topleft'}).addTo(map);
+  const layerControlContainer = layerControl.getContainer();
+  
+  layerControlContainer.classList.add("xl:translate-x-[25vw]", "2xl:translate-x-[20vw]", "transition-transform", "duration-500", "bg-palette1-a")
+
   return {map, layerControlContainer};
 };
 
