@@ -44,9 +44,21 @@ function Map() {
   //useState used for expanding and collapsing sections (only one at time)
   const [expand, setExpand] = useState(0);
   const [selectedIsland, setSelectedIsland] = useState(null);
-  //const [isMobile, setIsMobile] = useState(() => {return window.innerWidth < 1280;});
+  const [isMobile, setIsMobile] = useState(() => {return window.innerWidth < 640;});
   const [isOpen, setIsOpen] = useState(() => {return window.innerWidth >= 1280;});
   const [layerControlContainer, setLayerControlContainer] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+  
+    window.addEventListener("resize", handleResize);
+  
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const togglePanel = () => {
     setIsOpen((prev) => !prev);
@@ -83,12 +95,12 @@ function Map() {
   //return (HTML)
   return (
     <MapProvider mapInstance={mapInstance}>
-      <div className="grid grid-flow-col grid-cols-[50%_0%_50%] sm:grid-cols-[50%_0%_50%] xl:grid-cols-[25%_50%_25%] 2xl:grid-cols-[20%_60%_20%] h-screen flex-1 relative overflow-hidden max-w-screen">
-        <div id="sectionsSidebar" className={`relative flex w-full h-full overflow-y-auto z-[2000] transition-transform duration-500 col-start-1 col-end-2 row-span-full ${isOpen ? "translate-x-0" : "-translate-x-[calc(100%-28px)]"}`}>
+      <div className="grid grid-flow-col grid-cols-[50%_0%_50%] xl:grid-cols-[25%_50%_25%] 2xl:grid-cols-[20%_60%_20%] h-screen flex-1 relative overflow-hidden max-w-screen">
+        <div id="sectionsSidebar" className={`relative flex w-full h-full overflow-y-auto z-[2000] transition-transform duration-500 col-start-1 col-end-2 max-sm:col-end-4 row-span-full ${isOpen ? "z-[3000] translate-x-0" : "-translate-x-[calc(100%-28px)]"}`}>
           <div className="h-full w-full overflow-y-auto scrollbar scrollbar-thumb-palette2-e scrollbar-track-palette1-d bg-palette1-d border-y-2 border-palette1-c border-solid p-2">
             <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Map parts</p>
             <ul>
-              {map_parts.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type} onSelectIsland={(islandData) => setSelectedIsland(islandData)}/>))}
+              {map_parts.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type} onSelectIsland={(islandData) => {setSelectedIsland(islandData); if(isMobile){setIsOpen(false)};}}/>))}
             </ul>
             <hr className="h-0.5 border-0 bg-palette1-c mb-5"></hr>
             <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Points of interest</p>
@@ -97,7 +109,7 @@ function Map() {
             <p className="font-semibold text-3xl pb-5 my-auto text-palette1-a font-lacquer">Treasure value</p>
               {treasure_values.map((section) => (<CollapsibleSidebarButton key={section.sectionId} expand={expand} setExpand={setExpand} sectionId={section.sectionId} tableName="map_parts" img={section.type} text={section.text} type={section.type}/>))}
           </div>
-          <button onClick={togglePanel} className={`bg-palette1-d text-white font-bold text-3xl rounded-r-lg mt-2 h-16 w-8`}>
+          <button onClick={togglePanel} className={`z-[2500] bg-palette1-d text-white font-bold text-3xl rounded-r-lg mt-2 h-16 w-8`}>
             <img src="/svg/arrow.svg" alt="" className={` h-4 w-4 m-auto ${isOpen ? "rotate-90" : "-rotate-90"}`}/>
           </button>
         </div>
