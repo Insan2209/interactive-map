@@ -46,3 +46,12 @@ code {
   color: #CCC9DC;
   font-size: 1.5rem;
 }
+
+#signin:hover span {
+  display: none
+}
+
+#signin:hover::before
+{
+  content: "Not available";
+}
