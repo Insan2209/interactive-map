@@ -33,7 +33,7 @@ function InitSections({tableName, columnName, type, onSelectIsland}) {
 
     //data is being sent to SidebarButton components through mapping
     return(
-        <div className="ml-6">
+        <ul className="ml-6">
             {data && (
                 <>
                 {data.map(data => (
@@ -41,7 +41,7 @@ function InitSections({tableName, columnName, type, onSelectIsland}) {
                 ))}
                 </>
             )}
-        </div>
+        </ul>
     );
 }
 
