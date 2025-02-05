@@ -12,7 +12,7 @@ function InfoPanel({ island }) {
     if (!island) {
       return (
         <div className={`relative flex w-full h-min overflow-y-auto max-sm:col-start-1 col-start-3 col-end-4 row-span-full z-[2000] transition-transform duration-500 ${isOpen ? "translate-x-0" : "translate-x-[calc(100%-28px)]"}`}>
-          <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-l-lg mt-2 -mr-2 h-16 w-10">
+          <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-l-lg mt-2 -mr-2 h-16 w-10" aria-label="Info Panel">
             <img src="/svg/arrow.svg" alt="" className={`h-4 w-4 m-auto  ${isOpen ? "-rotate-90" : "rotate-90"}`}/>
           </button>
           <div id="information_panel" className="w-full h-full bg-transparent row-span-full z-[2000] bg-cover" style={{ backgroundImage: "url('/svg/bg1.svg')" }}>
@@ -31,7 +31,7 @@ function InfoPanel({ island }) {
   
     return (
       <div className={`relative flex w-full h-full overflow-y-auto max-sm:col-start-1 col-start-3 col-end-4 row-span-full z-[2000] transition-transform duration-500 ${isOpen ? "translate-x-0" : "translate-x-[calc(100%-28px)]"}`}>
-        <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-l-lg mt-2 -mr-2 h-16 w-10">
+        <button onClick={togglePanel} className="bg-palette1-d text-white font-bold text-3xl rounded-l-lg mt-2 -mr-2 h-16 w-10" aria-label="Info Panel">
           <img src="/svg/arrow.svg" alt="" className={`h-4 w-4 m-auto  ${isOpen ? "-rotate-90" : "rotate-90"}`}/>
         </button>
         <div id="information_panel" className="flex items-center w-full h-full bg-transparent bg-cover" style={{ backgroundImage: "url('/svg/bg1.svg')" }}>
