@@ -60,7 +60,7 @@ async function InitMap(onIslandClick)
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////// <-- popups and popFunctions --> ///////////////////////////////
+  /////////////////////////////// <-- popups and popupFunctions --> ///////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
   // popup with coordinates, purely for checking x and y for map stuff - will be commented out later
@@ -81,7 +81,7 @@ async function InitMap(onIslandClick)
   {
     const marker = L.marker([lat, lng], {
       draggable: true,
-      icon: L.icon({iconUrl: 'svg/customMarker.svg', shadowUrl: 'svg/customMarker.svg', iconSize: [40, 52], shadowSize: [0, 0], iconAnchor: [40, 52], shadowAnchor: [0, 0], popupAnchor: [0, 0]})
+      icon: L.icon({iconUrl: 'svg/customMarker.svg', shadowUrl: 'svg/customMarker.svg', iconSize: [40, 52], shadowSize: [0, 0], iconAnchor: [20, 52], shadowAnchor: [0, 0], popupAnchor: [0, 0]})
     })
     customMarkers.addLayer(marker);
     map.closePopup();
