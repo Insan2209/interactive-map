@@ -41,8 +41,14 @@ async function InitMap(onIslandClick)
   // assign map and image dimensions
   const rc = new L.RasterCoords(map, img)
   // set the view in the middle of the image, initial zoom to 2 and custom max bounds
+  const deviceWidth = document.documentElement.clientWidth
+  let boundsValue = deviceWidth/10; 
+  if(boundsValue > 200) {
+    boundsValue = 200;
+  }
+  console.log(boundsValue)
   map.setView(rc.unproject([img[0]/2, img[1]/2]), 2)
-  map.setMaxBounds([[-200,400],[400,-200]])
+  map.setMaxBounds([[0-boundsValue,215+boundsValue],[200+boundsValue,0-boundsValue]])
 
   // the tile layer containing the image generated with `gdal2tiles --leaflet -p raster -w none <img> tiles`
   const basemap = L.tileLayer('./tiles/{z}/{x}/{y}.png', {
@@ -150,10 +156,11 @@ async function InitMap(onIslandClick)
   }
   map.on('contextmenu', onRightClick)
 
-  ///////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////// <-- region polygons --> ///////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////
-
+  /////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////// <-- region polygons layer --> ///////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////
+  
+  // creating all of region polygons (borders)
   const TSOP_polygon = L.polygon([
     [0, 0],
     [0, 82.47],
@@ -325,6 +332,38 @@ async function InitMap(onIslandClick)
   // adding all region polygons into one layer
   const regionPolygons = L.layerGroup([TSOP_polygon, TW_polygon, TAI_polygon, TDR_polygon, NMS_polygon]);
 
+  //////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////// <-- region logos layer --> ///////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+
+  //placing regions logos in right coordinates
+  const TSOP_logo = L.imageOverlay("/img/The Shores of Plenty Logo.png",[[34, 12], [67.83, 62]])
+  const TW_logo = L.imageOverlay("/img/The Wilds Logo.png",[[26, 104], [60.83, 154]])
+  const TAI_logo = L.imageOverlay("/img/The Ancient Isles Logo.png",[[108, 53], [146.63, 103]])
+  const TDR_logo = L.imageOverlay("/img/The Devil's Roar Logo.png",[[103, 167], [153, 207.41]])
+
+  //adding all region logos into one layer
+  const regionLogos = L.layerGroup([TSOP_logo, TW_logo, TAI_logo, TDR_logo]);
+  regionLogos.addTo(map);
+
+  // updating visibility based on zoom
+  const updateLogoVisibility = () => {
+    const currentZoom = map.getZoom();
+    regionLogos.eachLayer(layer => {
+      const logo = layer.getElement();
+      if (logo) {
+        logo.style.display = currentZoom < 3.5 ? 'block' : 'none';
+      }
+    });
+  };
+  map.on('zoomend', updateLogoVisibility);
+  map.on('overlayadd', function(e) {
+    if (e.layer === regionLogos) {
+      updateLogoVisibility();
+    }
+  });
+  updateLogoVisibility();
+
   ////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////// <-- tile names layer --> ///////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -468,6 +507,7 @@ async function InitMap(onIslandClick)
 
   // making some layers visible by default
   map.addLayer(regionPolygons);
+  map.addLayer(regionLogos);
   map.addLayer(customMarkers);
   map.addLayer(outsideTileNames);
   
@@ -477,7 +517,8 @@ async function InitMap(onIslandClick)
   }
   const overlayLayers = {
     '<span class="text-purple-600 font-semibold pl-2">Custom Markers</span>': customMarkers,
-    '<span class="text-sky-600 font-semibold pl-2">Regions</span>': regionPolygons,
+    '<span class="text-sky-600 font-semibold pl-2">Region Borders</span>': regionPolygons,
+    '<span class="text-orange-600 font-semibold pl-2">Region Logos</span>': regionLogos,
     '<span class="text-green-600 font-semibold pl-2">Island Names</span>': islandNames,
     '<span class="text-red-600 font-semibold pl-2">Outside Tile Names</span>': outsideTileNames,
     '<span class="text-yellow-600 font-semibold pl-2">Inside Tile Names</span>': insideTileNames,
